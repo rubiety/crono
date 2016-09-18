@@ -6,7 +6,7 @@ module Crono
 
     def initialize(period, at: nil, on: nil, within: nil)
       @period = period
-      @at_hour, @at_min = parse_at(at) if at
+      @at_hour, @at_min, @at_sec = parse_at(at) if at
       @interval = Interval.parse(within) if within
       @on = parse_on(on) if on
     end
@@ -67,16 +67,16 @@ module Crono
       case at
       when String
         time = Time.parse(at)
-        return time.hour, time.min
+        return time.hour, time.min, time.sec
       when Hash
-        return at[:hour], at[:min]
+        return at[:hour], at[:min], at[:sec]
       else
         fail "Unknown 'at' format"
       end
     end
 
     def time_atts
-      { hour: @at_hour, min: @at_min }.compact
+      { hour: @at_hour, min: @at_min, sec: @at_sec }.compact
     end
   end
 end
