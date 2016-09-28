@@ -62,10 +62,15 @@ module Crono
     end
 
     def update_model
-      saved_log = model.reload.log || ''
-      log_to_save = saved_log + job_log.string
-      model.update(last_performed_at: last_performed_at, log: log_to_save,
-                   healthy: healthy)
+      attrs = { last_performed_at: last_performed_at, healthy: healthy }
+
+      if Crono::CronoJob.maintain_log
+        saved_log = model.reload.log || ''
+        log_to_save = saved_log + job_log.string
+        attrs.merge!(log: log_to_save)
+      end
+
+      model.update(attrs)
     end
 
     def perform_job
